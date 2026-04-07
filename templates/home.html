@@ -1,0 +1,139 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand" href="{% url 'home' %}">📚 Study Planner</a>
+
+        <!-- Toggle (for mobile) -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'add_task' %}">Add Task</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'overdue' %}">Overdue</a>
+                </li>
+
+            </ul>
+            
+        </div>
+
+    </div>
+</nav>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+
+<h1 class="text-center mb-4 fw-bold">
+    📚 Personal Study Planner
+</h1>
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between mb-3">
+        <a href="/add/" class="btn btn-primary">Add Task</a>
+        <a href="/overdue/" class="btn btn-danger">Overdue Tasks</a>
+    </div>
+
+    <!-- Search -->
+    <form method="GET" action="/search/" class="mb-4 d-flex">
+        <input type="text" name="subject" class="form-control me-2" placeholder="Search by subject">
+        <button class="btn btn-dark">Search</button>
+    </form>
+    {% if no_results %}
+    <div class="alert alert-warning text-center">
+        No tasks found for subject "{{ query }}"
+    </div>
+{% endif %}
+{% if error %}
+    <div class="alert alert-danger text-center">
+        {{ error }}
+    </div>
+{% endif %}
+
+{% if no_overdue %}
+    <div class="alert alert-info text-center">
+        No overdue tasks 
+    </div>
+{% endif %}
+
+{% if not tasks %}
+    <div class="text-center mt-5">
+        <h4>No tasks available</h4>
+        <p>Add a task to get started!</p>
+    </div>
+{% endif %}
+
+
+
+    <!-- Task Cards -->
+    <div class="row">
+        {% for task in tasks %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+
+                    <h5 class="card-title">{{ task.task_name }}</h5>
+
+                    <p class="card-text">
+                        <strong>Subject:</strong> {{ task.subject }} <br>
+                        <strong>Deadline:</strong> {{ task.deadline }} <br>
+                    </p>
+
+                    <!-- Priority Badge -->
+                    {% if task.priority == "High" %}
+                        <span class="badge bg-danger">High</span>
+                    {% elif task.priority == "Medium" %}
+                        <span class="badge bg-warning text-dark">Medium</span>
+                    {% else %}
+                        <span class="badge bg-success">Low</span>
+                    {% endif %}
+
+                    <!-- Status -->
+                    <p class="mt-2">
+                        <strong>Status:</strong> 
+                        {% if task.status == "Completed" %}
+                            <span class="text-success">Completed</span>
+                        {% else %}
+                            <span class="text-warning">Pending</span>
+                        {% endif %}
+                    </p>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <a href="/complete/{{ task.id }}" class="btn btn-success btn-sm">Done</a>
+                        <a href="/delete/{{ task.id }}" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+<footer class="text-center mt-5 text-muted">
+    <hr>
+    <p>© 2026 Study Planner | Built with Django</p>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
